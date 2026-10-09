@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พิซซ่าเจ้าปัญหา กับ ภาคีตัวส่วนสามัคคี (The Pizza Equalizer)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kanit', sans-serif; }
+        .pizza-slice {
+            transition: all 0.3s ease;
+        }
+        .pizza-slice:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body class="bg-amber-50 min-h-screen text-slate-800">
+    <header class="bg-orange-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🍕</span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-wide">พิซซ่าเจ้าปัญหา กับ ภาคีตัวส่วนสามัคคี</h1>
+                    <p class="text-xs text-orange-200">นวัตกรรมการสอนเศษส่วน ป.5 แบบรูปธรรม (CPA Approach)</p>
+                </div>
+            </div>
+            <nav class="flex gap-2 bg-orange-700 p-1.5 rounded-xl text-sm">
+                <button onclick="switchTab('simulator')" id="btn-simulator" class="px-4 py-2 rounded-lg font-medium transition bg-white text-orange-700 shadow">ถาดจำลอง (CPA)</button>
+                <button onclick="switchTab('game')" id="btn-game" class="px-4 py-2 rounded-lg font-medium transition text-white hover:bg-orange-600">ภารกิจท้าทาย</button>
+                <button onclick="switchTab('guide')" id="btn-guide" class="px-4 py-2 rounded-lg font-medium transition text-white hover:bg-orange-600">คู่มือคุณครู</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6">
+        <!-- TAB 1: SIMULATOR (CPA Approach) -->
+        <section id="tab-simulator" class="space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-orange-100">
+                <h2 class="text-xl font-bold text-orange-600 mb-2 flex items-center gap-2">
+                    <span>✨</span> สถานการณ์จำลอง: มาแปลงร่างตัวส่วนให้เท่ากันก่อนรวมร่าง!
+                </h2>
+                <p class="text-slate-600 text-sm mb-4">
+                    เลือกสัดส่วนพิซซ่าของน้องและพี่ สังเกตว่าชิ้นส่วนขนาดต่างกันจะนำมารวมกันตรงๆ ไม่ได้ ต้องแปลงขนาดให้เท่ากันก่อน!
+                </p>
+
+                <!-- Interactive Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-orange-50/60 p-4 rounded-xl border border-orange-200">
+                    <!-- Fraction A -->
+                    <div class="space-y-3">
+                        <label class="block font-semibold text-orange-900">ชิ้นส่วนที่ 1 (น้องกิน):</label>
+                        <div class="flex gap-2">
+                            <button onclick="setFractionA(1, 2)" id="btn-a-1-2" class="flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition active">1 / 2 ถาด</button>
+                            <button onclick="setFractionA(1, 4)" id="btn-a-1-4" class="flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition">1 / 4 ถาด</button>
+                        </div>
+                    </div>
+
+                    <!-- Fraction B -->
+                    <div class="space-y-3">
+                        <label class="block font-semibold text-orange-900">ชิ้นส่วนที่ 2 (พี่กิน):</label>
+                        <div class="flex gap-2">
+                            <button onclick="setFractionB(1, 4)" id="btn-b-1-4" class="flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition active">1 / 4 ถาด</button>
+                            <button onclick="setFractionB(1, 8)" id="btn-b-1-8" class="flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition">1 / 8 ถาด</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualizer Canvas / Container -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <!-- Tray 1 -->
+                    <div class="bg-amber-50 p-4 rounded-xl text-center border border-amber-200 flex flex-col items-center">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-orange-700 bg-orange-100 px-3 py-1 rounded-full mb-3">ถาดที่ 1 (น้อง)</span>
+                        <div id="tray-a-visual" class="w-36 h-36 relative rounded-full border-4 border-amber-400 bg-amber-100 overflow-hidden shadow-inner flex items-center justify-center">
+                            <!-- Dynamically rendered via JS -->
+                        </div>
+                        <p id="text-tray-a" class="mt-3 font-bold text-lg text-slate-700">1 / 2 ถาด</p>
+                    </div>
+
+                    <!-- Plus Symbol & Conversion Box -->
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <div class="w-12 h-12 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-2xl shadow-md">+</div>
+                        <button onclick="toggleConversion()" class="mt-2 bg-amber-500 hover:bg-amber-600 text-white text-xs px-4 py-2 rounded-xl font-medium transition shadow">
+                            🔄 แปลงร่างให้ตัวส่วนเท่ากัน
+                        </button>
+                    </div>
+
+                    <!-- Tray 2 -->
+                    <div class="bg-amber-50 p-4 rounded-xl text-center border border-amber-200 flex flex-col items-center">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-orange-700 bg-orange-100 px-3 py-1 rounded-full mb-3">ถาดที่ 2 (พี่)</span>
+                        <div id="tray-b-visual" class="w-36 h-36 relative rounded-full border-4 border-amber-400 bg-amber-100 overflow-hidden shadow-inner flex items-center justify-center">
+                            <!-- Dynamically rendered via JS -->
+                        </div>
+                        <p id="text-tray-b" class="mt-3 font-bold text-lg text-slate-700">1 / 4 ถาด</p>
+                    </div>
+                </div>
+
+                <!-- Result & Teacher's Script Explanation Box -->
+                <div class="mt-8 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg">
+                    <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                        <span>💬</span> คำอธิบาย & ผลลัพธ์รวมร่าง
+                    </h3>
+                    <p id="explanation-text" class="text-orange-100 text-sm sm:text-base leading-relaxed">
+                        กำลังคำนวณสัดส่วนพิซซ่า... ลองกดปุ่ม "แปลงร่างให้ตัวส่วนเท่ากัน" เพื่อดูว่าชิ้นส่วนจะประสานกันอย่างไร!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: GAME / CHALLENGE -->
+        <section id="tab-game" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-orange-100">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-orange-600">ภารกิจภาคีตัวส่วนสามัคคี</h2>
+                        <p class="text-slate-600 text-sm">ทดสอบความเข้าใจการบวกลบเศษส่วนผ่านโจทย์สถานการณ์จริง</p>
+                    </div>
+                    <div class="bg-orange-100 text-orange-800 font-bold px-4 py-2 rounded-xl text-sm">
+                        คะแนน: <span id="score-display">0</span> / 3
+                    </div>
+                </div>
+
+                <div id="game-card" class="bg-orange-50 border border-orange-200 rounded-2xl p-6 text-center space-y-6">
+                    <span id="question-badge" class="inline-block bg-orange-600 text-white text-xs px-3 py-1 rounded-full font-semibold">ข้อที่ 1 จาก 3</span>
+                    <h3 id="question-title" class="text-xl font-bold text-slate-800">แม่ทำพิซซ่าถาดใหญ่ น้องกินไป <span class="text-orange-600 font-extrabold">1/2</span> ถาด ส่วนพี่กินไป <span class="text-orange-600 font-extrabold">1/4</span> ถาด ทั้งสองคนกินรวมกันเป็นเท่าไร?</h3>
+                    
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <div id="feedback-box" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+
+                    <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md">
+                        ลุยข้อถัดไป ➔
+                    </button>
+                </div>
+
+                <!-- Complete Game Screen -->
+                <div id="complete-card" class="hidden bg-orange-50 border border-orange-200 rounded-2xl p-8 text-center space-y-4">
+                    <div class="text-5xl">🏆</div>
+                    <h3 class="text-2xl font-bold text-orange-700">ยอดเยี่ยมมาก! คุณผ่านภารกิจภาคีตัวส่วนสามัคคีแล้ว</h3>
+                    <p class="text-slate-600 text-sm max-w-md mx-auto">คุณเข้าใจหลักการแปลงชิ้นส่วนให้เท่ากันก่อนบวกลบแล้ว เยี่ยมยอดสมกับเป็นผู้ช่วยเชฟตัวจริง!</p>
+                    <button onclick="restartGame()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-xl transition shadow-md">
+                        เล่นใหม่อีกครั้ง 🔄
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: TEACHER GUIDE -->
+        <section id="tab-guide" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 shadow-md border border-orange-100 space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-orange-600 mb-2">📚 คู่มือคุณครู: การใช้งานนวัตกรรมในห้องเรียน ป.5</h2>
+                    <p class="text-slate-600 text-sm">แนวทางการจัดกิจรรมการเรียนรู้ 20 นาทีตามหลัก CPA Approach (Concrete -> Pictorial -> Abstract)</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2">
+                        <span class="bg-amber-600 text-white text-xs font-bold px-2.5 py-1 rounded-md">ขั้นที่ 1 (5 นาที)</span>
+                        <h3 class="font-bold text-slate-800">สถานการณ์ท้าทาย</h3>
+                        <p class="text-xs text-slate-600">ตั้งคำถามกระตุ้นความคิดว่าทำไม 1/2 + 1/4 ถึงห้ามเอาตัวเลขมาบวกกันตรงๆ ชวนเด็กมองภาพชิ้นส่วนพิซซ่าที่ไม่เท่ากัน</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-xl border border-orange-200 space-y-2">
+                        <span class="bg-orange-600 text-white text-xs font-bold px-2.5 py-1 rounded-md">ขั้นที่ 2 (10 นาที)</span>
+                        <h3 class="font-bold text-slate-800">ปฏิบัติจริง (CPA)</h3>
+                        <p class="text-xs text-slate-600">ให้นักเรียนใช้หน้าจอจำลองนี้ทดลองแปลงชิ้นส่วน 1/2 ให้เป็น 2/4 เพื่อให้ขนาดชิ้นส่วนเท่ากันก่อนนำมาบวกกัน</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 space-y-2">
+                        <span class="bg-yellow-600 text-white text-xs font-bold px-2.5 py-1 rounded-md">ขั้นที่ 3 (5 นาที)</span>
+                        <h3 class="font-bold text-slate-800">สรุปสะท้อนคิด</h3>
+                        <p class="text-xs text-slate-600">สรุปหลักการสำคัญ: "หัวใจของการบวกลบเศษส่วนไม่ใช่การท่องจำสูตรไขว้ แต่คือการทำให้ขนาดชิ้นส่วน (ตัวส่วน) เท่ากันก่อนเสมอ"</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">💡 คำแนะนำสำหรับ Differentiation (การดูแลเด็กเก่งและเด็กอ่อน)</h3>
+                    <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                        <li><strong>สำหรับเด็กเรียนช้า:</strong> ให้ใช้สื่อจำลองนี้ฝึกโจทย์ตัวส่วนพหคูณง่ายๆ (เช่น 2, 4, 8) นานขึ้นโดยไม่รีบร้อนเร่งสูตรคูณ</li>
+                        <li><strong>สำหรับเด็กเก่ง:</strong> ท้าทายด้วยโจทย์ตัวส่วนไม่เป็นพหคูณโดยตรง เช่น 1/2 + 1/3 แล้วให้ช่วยกันคิดค้นวิธีแปลงร่างชิ้นส่วนร่วมกัน</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // State Variables
+        let currentTab = 'simulator';
+        let numA = 1, denA = 2; // 1/2
+        let numB = 1, denB = 4; // 1/4
+        let isConverted = false;
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questions = [
+            {
+                title: "แม่ทำพิซซ่าถาดใหญ่ น้องกินไป <span class='text-orange-600 font-extrabold'>1/2</span> ถาด ส่วนพี่กินไป <span class='text-orange-600 font-extrabold'>1/4</span> ถาด ทั้งสองคนกินรวมกันเป็นเท่าไร?",
+                options: [
+                    { text: "2/6 ถาด (นำตัวเลขบวกกันตรงๆ)", correct: false, reason: "ผิดจ้า! นำตัวเลขมารวมกันตรงๆ ไม่ได้เพราะขนาดชิ้นส่วนไม่เท่ากัน" },
+                    { text: "3/4 ถาด (แปลง 1/2 เป็น 2/4 แล้วบวก 1/4)", correct: true, reason: "ถูกต้องที่สุด! แปลง 1/2 เป็น 2/4 แล้วรวมกับ 1/4 ได้ 3/4 ถาดพอดีเยี่ยม!" },
+                    { text: "1/6 ถาด (นำตัวส่วนลบกัน)", correct: false, reason: "ผิดจ้า! นั่นไม่ใช่หลักการรวมชิ้นส่วนพิซซ่าเลยจ้า" }
+                ]
+            },
+            {
+                title: "มีพิซซ่าอยู่ <span class='text-orange-600 font-extrabold'>3/4</span> ถาด แบ่งให้เพื่อนกินไป <span class='text-orange-600 font-extrabold'>1/8</span> ถาด จะเหลือพิซซ่าเท่าไร?",
+                options: [
+                    { text: "2/4 ถาด", correct: false, reason: "เกือบถูก แต่ลืมแปลงตัวส่วน 3/4 ให้เป็นส่วน 8 (6/8) ก่อนลบออก 1/8 จ้า" },
+                    { text: "5/8 ถาด (แปลง 3/4 เป็น 6/8 แล้วลบ 1/8)", correct: true, reason: "ถูกต้อง! 6/8 - 1/8 = 5/8 ถาด เป๊ะเลย!" },
+                    { text: "2/8 ถาด", correct: false, reason: "ยังไม่ถูกต้อง ลองใช้หลักการแปลงชิ้นส่วนให้เท่ากันดูก่อนนะ" }
+                ]
+            },
+            {
+                title: "ทำไมเราถึง <span class='text-red-600 font-extrabold'>ห้าม</span> นำตัวส่วนมาบวกหรือลบกันโดยตรง?",
+                options: [
+                    { text: "เพราะขนาดของชิ้นส่วน (ตัวส่วน) ไม่เท่ากัน จะนำมารวมหรือหักลบกันไม่ได้โดยตรง", correct: true, reason: "ถูกต้องที่สุด! หัวใจสำคัญคือ 'ขนาดชิ้นส่วน' ต้องเท่ากันก่อนเสมอ" },
+                    { text: "เพราะกฎคณิตศาสตร์ห้ามไว้เฉยๆ", correct: false, reason: "ไม่ใช่กฎลอยๆ แต่เพราะขนาดชิ้นส่วนแบ่งไม่เท่ากันจริงๆ จ้า" },
+                    { text: "เพราะทำให้คำตอบมีค่าน้อยเกินไป", correct: false, reason: "ไม่เกี่ยวกันจ้า ลองนึกถึงชิ้นส่วนพิซซ่าขนาดไม่เท่ากันดูนะ" }
+                ]
+            }
+        ];
+
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-simulator').classList.add('hidden');
+            document.getElementById('tab-game').classList.add('hidden');
+            document.getElementById('tab-guide').classList.add('hidden');
+
+            document.getElementById('btn-simulator').className = "px-4 py-2 rounded-lg font-medium transition text-white hover:bg-orange-600";
+            document.getElementById('btn-game').className = "px-4 py-2 rounded-lg font-medium transition text-white hover:bg-orange-600";
+            document.getElementById('btn-guide').className = "px-4 py-2 rounded-lg font-medium transition text-white hover:bg-orange-600";
+
+            if(tab === 'simulator') {
+                document.getElementById('tab-simulator').classList.remove('hidden');
+                document.getElementById('btn-simulator').className = "px-4 py-2 rounded-lg font-medium transition bg-white text-orange-700 shadow";
+            } else if(tab === 'game') {
+                document.getElementById('tab-game').classList.remove('hidden');
+                document.getElementById('btn-game').className = "px-4 py-2 rounded-lg font-medium transition bg-white text-orange-700 shadow";
+                loadQuestion();
+            } else if(tab === 'guide') {
+                document.getElementById('tab-guide').classList.remove('hidden');
+                document.getElementById('btn-guide').className = "px-4 py-2 rounded-lg font-medium transition bg-white text-orange-700 shadow";
+            }
+        }
+
+        // Simulator Logic
+        function setFractionA(n, d) {
+            numA = n;
+            denA = d;
+            isConverted = false;
+            document.getElementById('btn-a-1-2').className = (d === 2) ? "flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm active" : "flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition";
+            document.getElementById('btn-a-1-4').className = (d === 4) ? "flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm active" : "flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition";
+            updateSimulator();
+        }
+
+        function setFractionB(n, d) {
+            numB = n;
+            denB = d;
+            isConverted = false;
+            document.getElementById('btn-b-1-4').className = (d === 4) ? "flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm active" : "flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition";
+            document.getElementById('btn-b-1-8').className = (d === 8) ? "flex-1 py-2 px-3 bg-white border-2 border-orange-300 rounded-lg text-sm font-bold shadow-sm active" : "flex-1 py-2 px-3 bg-white border-2 border-orange-200 rounded-lg text-sm font-bold shadow-sm hover:bg-orange-100 transition";
+            updateSimulator();
+        }
+
+        function toggleConversion() {
+            isConverted = !isConverted;
+            updateSimulator();
+        }
+
+        function renderPizzaSvg(num, den, color) {
+            let svg = `<svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">`;
+            const cx = 50, cy = 50, r = 48;
+            for (let i = 0; i < den; i++) {
+                const angle1 = (i * 2 * Math.PI) / den;
+                const angle2 = ((i + 1) * 2 * Math.PI) / den;
+                const x1 = cx + r * Math.cos(angle1);
+                const y1 = cy + r * Math.sin(angle1);
+                const x2 = cx + r * Math.cos(angle2);
+                const y2 = cy + r * Math.sin(angle2);
+                const largeArc = (2 * Math.PI) / den > Math.PI ? 1 : 0;
+                const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                
+                let fillColor = "#fef3c7"; // empty slice background
+                if (i < num) {
+                    fillColor = color; // filled slice
+                }
+                svg += `<path d="${pathData}" fill="${fillColor}" stroke="#d97706" stroke-width="1.5" />`;
+            }
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function updateSimulator() {
+            let effectiveNumA = numA;
+            let effectiveDenA = denA;
+            let effectiveNumB = numB;
+            let effectiveDenB = denB;
+
+            let desc = "";
+
+            if (isConverted) {
+                // Find common denominator (e.g. 4 or 8)
+                let commonDen = Math.max(denA, denB);
+                if (denA !== denB) {
+                    commonDen = denA * denB; // simplified for demo pairs (2 & 4 -> 4, 4 & 8 -> 8)
+                    if(denA === 2 && denB === 4) commonDen = 4;
+                    if(denA === 4 && denB === 8) commonDen = 8;
+                }
+
+                effectiveNumA = numA * (commonDen / denA);
+                effectiveDenA = commonDen;
+                
+                effectiveNumB = numB * (commonDen / denB);
+                effectiveDenB = commonDen;
+
+                let totalSum = effectiveNumA + effectiveNumB;
+                desc = `แปลงร่างสำเร็จ! ถาดที่ 1 กลายเป็น <span class="font-bold underline">${effectiveNumA}/${effectiveDenA}</span> และถาดที่ 2 กลายเป็น <span class="font-bold underline">${effectiveNumB}/${effectiveDenB}</span> ตอนนี้ขนาดชิ้นส่วนเท่ากันแล้ว นำเศษมารวมกันได้ทันที: <strong>${effectiveNumA} + ${effectiveNumB} = ${totalSum}</strong> กลายเป็น <span class="bg-amber-400 text-orange-900 px-2 py-0.5 rounded font-extrabold">${totalSum}/${effectiveDenA} ถาด</span>! 🎉`;
+            } else {
+                desc = `ยังไม่ได้แปลงร่าง! ถาดแรกเป็นส่วน ${denA} ส่วนถาดสองเป็นส่วน ${denB} ขนาดชิ้นส่วนไม่เท่ากัน ห้ามนำตัวเลขมารวมกันตรงๆ เด็ดขาด! กดปุ่ม <strong>"แปลงร่างให้ตัวส่วนเท่ากัน"</strong> ด้านบนเพื่อดูการแปลงชิ้นส่วนกันเลยครับ`;
+            }
+
+            document.getElementById('tray-a-visual').innerHTML = renderPizzaSvg(effectiveNumA, effectiveDenA, "#f97316");
+            document.getElementById('tray-b-visual').innerHTML = renderPizzaSvg(effectiveNumB, effectiveDenB, "#ea580c");
+            
+            document.getElementById('text-tray-a').innerText = `${numA} / ${denA} ถาด` + (isConverted && denA !== effectiveDenA ? ` (${effectiveNumA}/${effectiveDenA})` : '');
+            document.getElementById('text-tray-b').innerText = `${numB} / ${denB} ถาด` + (isConverted && denB !== effectiveDenB ? ` (${effectiveNumB}/${effectiveDenB})` : '');
+            
+            document.getElementById('explanation-text').innerHTML = desc;
+        }
+
+        // Game Logic
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                document.getElementById('game-card').classList.add('hidden');
+                document.getElementById('complete-card').classList.remove('hidden');
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            document.getElementById('question-badge').innerText = `ข้อที่ ${currentQuestion + 1} จาก 3`;
+            document.getElementById('question-title').innerHTML = q.title;
+            document.getElementById('score-display').innerText = score;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-white border-2 border-orange-200 rounded-xl font-medium text-slate-700 hover:border-orange-500 hover:bg-orange-100 transition text-sm text-left shadow-sm";
+                btn.innerHTML = `${idx + 1}. ${opt.text}`;
+                btn.onclick = () => selectOption(opt.correct, opt.reason);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedback-box').classList.add('hidden');
+            document.getElementById('next-question-btn').classList.add('hidden');
+        }
+
+        function selectOption(isCorrect, reason) {
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                score++;
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-green-100 text-green-800 border border-green-300";
+                feedbackBox.innerHTML = `✅ ถูกต้องที่สุด! ${reason}`;
+            } else {
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-red-100 text-red-800 border border-red-300";
+                feedbackBox.innerHTML = `❌ ยังไม่ถูกต้องนะ: ${reason}`;
+            }
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('next-question-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('complete-card').classList.add('hidden');
+            document.getElementById('game-card').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            updateSimulator();
+        }
+    </script>
+</body>
+</html>
